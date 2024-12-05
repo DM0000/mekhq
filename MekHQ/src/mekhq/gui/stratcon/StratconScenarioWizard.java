@@ -48,6 +48,7 @@ import static mekhq.campaign.personnel.SkillType.S_LEADER;
 import static mekhq.campaign.stratcon.StratconRulesManager.BASE_LEADERSHIP_BUDGET;
 import static mekhq.campaign.stratcon.StratconRulesManager.ReinforcementResultsType.DELAYED;
 import static mekhq.campaign.stratcon.StratconRulesManager.ReinforcementResultsType.FAILED;
+import static mekhq.campaign.stratcon.StratconRulesManager.ReinforcementResultsType.INTERCEPTED;
 import static mekhq.campaign.stratcon.StratconRulesManager.getEligibleLeadershipUnits;
 import static mekhq.campaign.stratcon.StratconRulesManager.processReinforcementDeployment;
 import static mekhq.utilities.ReportingUtilities.CLOSING_SPAN_TAG;
@@ -133,6 +134,7 @@ public class StratconScenarioWizard extends JDialog {
                 gbc.gridy++;
             }
         }
+        
 
         gbc.gridx = 0;
         gbc.gridy++;
@@ -194,6 +196,12 @@ public class StratconScenarioWizard extends JDialog {
                 || currentTrackState.getRevealedCoords().contains(currentScenario.getCoords()) ||
                 (currentScenario.getDeploymentDate() != null)) {
             labelBuilder.append(currentScenario.getInfo(campaign, true));
+        }
+
+        if (Objects.requireNonNull(currentScenario.getCurrentState()) == ScenarioState.AWAITING_REINFORCEMENTS) {
+            labelBuilder.append("Reinforcements must be completedfirst");
+        } else {
+            labelBuilder.append("reinforcementsAndSupportInstructions.text");
         }
 
         if (Objects.requireNonNull(currentScenario.getCurrentState()) == ScenarioState.UNRESOLVED) {
@@ -517,6 +525,19 @@ public class StratconScenarioWizard extends JDialog {
                             }
                         }
                     }
+
+                    if (reinforcementResults == INTERCEPTED) {
+                        List<UUID> delayedReinforcements = currentScenario.getBackingScenario().getFriendlyDelayedReinforcements();
+
+                        for (UUID unitId : force.getAllUnits(true)) {
+                            try {
+                                delayedReinforcements.add(unitId);
+                            } catch (Exception ex) {
+                                logger.error(ex.getMessage(), ex);
+                            }
+                        }
+                    }
+                    
                 } else {
                     // In the event the player has selected multiple forces to act as the primary
                     // force, only commit the first force

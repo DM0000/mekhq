@@ -42,6 +42,7 @@ import mekhq.campaign.mission.ScenarioMapParameters.MapLocation;
 import mekhq.campaign.mission.atb.AtBScenarioModifier;
 import mekhq.campaign.mission.enums.AtBMoraleLevel;
 import mekhq.campaign.mission.enums.ContractCommandRights;
+import mekhq.campaign.mission.enums.ScenarioStatus;
 import mekhq.campaign.personnel.Person;
 import mekhq.campaign.personnel.Skill;
 import mekhq.campaign.personnel.turnoverAndRetention.Fatigue;
@@ -463,7 +464,7 @@ public class StratconRulesManager {
      * @param interceptedForce the {@link Force} that's being intercepted in the scenario
      */
      public static @Nullable void generateReinforcementInterceptionScenario(
-         Campaign campaign, AtBContract contract,
+         Campaign campaign, StratconScenario linkedScenario, AtBContract contract,
          StratconTrackState track, ScenarioTemplate template, Force interceptedForce) {
          StratconCoords scenarioCoords = getUnoccupiedCoords(track, false);
 
@@ -476,7 +477,9 @@ public class StratconRulesManager {
          }
 
          finalizeBackingScenario(campaign, contract, track, true, scenario);
-         scenario.setDeploymentDate(campaign.getLocalDate());
+         scenario.setActionDate(campaign.getLocalDate());
+         scenario.getBackingScenario().setStatus(ScenarioStatus.CURRENT);
+         linkedScenario.getBackingScenario().setReinformentScenarioID(scenario.getBackingScenario().getId());
      }
 
     /**
@@ -1202,7 +1205,8 @@ public class StratconRulesManager {
         }
 
         // Reinforcement roll failed, make interception check
-        int interceptionOdds = calculateScenarioOdds(track, campaignState.getContract(), true);
+        int interceptionOdds =  100;
+        // calculateScenarioOdds(track, campaignState.getContract(), true);
         int interceptionRoll = randomInt(100);
 
         // Check passed
@@ -1276,8 +1280,8 @@ public class StratconRulesManager {
                 case LowAtmosphere -> ScenarioTemplate.Deserialize(String.format(templateString, "Low-Atmosphere "));
             };
 
-            generateReinforcementInterceptionScenario(campaign, contract, track, scenarioTemplate, force);
-
+            generateReinforcementInterceptionScenario(campaign, scenario, contract, track, scenarioTemplate, force);
+            scenario.setCurrentState(ScenarioState.AWAITING_REINFORCEMENTS);
             return INTERCEPTED;
         }
 
@@ -1316,7 +1320,7 @@ public class StratconRulesManager {
             case LowAtmosphere -> ScenarioTemplate.Deserialize(String.format(templateString, "Low-Atmosphere "));
         };
 
-        generateReinforcementInterceptionScenario(campaign, contract, track, scenarioTemplate, force);
+        generateReinforcementInterceptionScenario(campaign, scenario, contract, track, scenarioTemplate, force);
 
         return INTERCEPTED;
     }

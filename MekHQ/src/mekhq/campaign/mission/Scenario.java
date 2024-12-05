@@ -101,6 +101,9 @@ public class Scenario implements IPlayerSettings {
     protected List<BotForce> botForces;
     protected List<BotForceStub> botForcesStubs;
 
+    //linked Interception Scenario
+    private int reinforcementScenarioID;
+
     // stores external id of bot forces
     private Map<String, Entity> externalIDLookup;
 
@@ -159,6 +162,7 @@ public class Scenario implements IPlayerSettings {
         botForces = new ArrayList<>();
         botForcesStubs = new ArrayList<>();
         externalIDLookup = new HashMap<>();
+        reinforcementScenarioID = 0;
 
         light = Light.DAY;
         weather = Weather.CLEAR;
@@ -223,6 +227,14 @@ public class Scenario implements IPlayerSettings {
 
     public void setDate(final @Nullable LocalDate date) {
         this.date = date;
+    }
+
+    public int getReinforcementScenarioID() {
+        return reinforcementScenarioID;
+    }
+
+    public void setReinformentScenarioID(int ScenarioID) {
+        reinforcementScenarioID = ScenarioID;
     }
 
     public boolean hasObjectives() {
@@ -866,16 +878,22 @@ public class Scenario implements IPlayerSettings {
     }
 
     public boolean canStartScenario(Campaign c) {
+
         if (!getStatus().isCurrent()) {
+            System.out.println("!getStatus().isCurrent()");
             return false;
         }
+    
         if (getForces(c).getAllUnits(true).isEmpty()) {
+            System.out.println("getForces(c).getAllUnits(true).isEmpty()");
             return false;
         }
         if (!includesRequiredPersonnel(c)) {
+            System.out.println("!includesRequiredPersonnel(c)");
             return false;
         }
         if (!includesRequiredUnits(c)) {
+            System.out.println("!includesRequiredUnits(c)");
             return false;
         }
         return true;
@@ -900,6 +918,7 @@ public class Scenario implements IPlayerSettings {
         MHQXMLUtility.writeSimpleXMLTag(pw, indent, "startingAnySEy", startingAnySEy);
         MHQXMLUtility.writeSimpleXMLTag(pw, indent, "status", getStatus().name());
         MHQXMLUtility.writeSimpleXMLTag(pw, indent, "id", id);
+        MHQXMLUtility.writeSimpleXMLTag(pw, indent, "reinforcementScenarioID", reinforcementScenarioID);
         if (null != stub) {
             stub.writeToXML(pw, indent);
         } else {
@@ -1033,6 +1052,9 @@ public class Scenario implements IPlayerSettings {
                     retVal.setReport(wn2.getTextContent());
                 } else if (wn2.getNodeName().equalsIgnoreCase("forceStub")) {
                     retVal.stub = ForceStub.generateInstanceFromXML(wn2, version);
+                }
+                else if (wn2.getNodeName().equalsIgnoreCase("reinforcementScenarioID")) {
+                    retVal.reinforcementScenarioID = Integer.parseInt(wn2.getTextContent());
                 } else if (wn2.getNodeName().equalsIgnoreCase("date")) {
                     retVal.date = MHQXMLUtility.parseDate(wn2.getTextContent().trim());
                 } else if (wn2.getNodeName().equalsIgnoreCase("cloaked")) {

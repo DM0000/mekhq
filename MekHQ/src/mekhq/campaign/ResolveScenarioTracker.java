@@ -47,9 +47,12 @@ import mekhq.campaign.unit.Unit;
 import mekhq.campaign.unit.actions.AdjustLargeCraftAmmoAction;
 import mekhq.gui.FileDialogs;
 
+import java.awt.Frame;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import javax.swing.JFrame;
 
 /**
  * This object will be the main workhorse for the scenario
@@ -698,6 +701,7 @@ public class ResolveScenarioTracker {
                     peopleStatus.put(p.getId(), status);
                 }
             }
+            //set Awaiting to ready and add reinformemet
         }
 
         // And now we have potential prisoners that are crewing a unit...

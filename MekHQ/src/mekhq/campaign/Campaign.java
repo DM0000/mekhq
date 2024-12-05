@@ -8667,4 +8667,10 @@ public class Campaign implements ITechManager {
         return commanderRank;
     }
 
+    public boolean checkInterceptScenario (Scenario s){
+    if(s.getReinforcementScenarioID() != 0){
+    return !getScenario(s.getReinforcementScenarioID()).getStatus().isCurrent();
+    }
+    return true;
+    }
 }

@@ -43,6 +43,7 @@ import mekhq.campaign.force.StrategicFormation;
 import mekhq.campaign.mission.*;
 import mekhq.campaign.mission.atb.AtBScenarioFactory;
 import mekhq.campaign.mission.enums.MissionStatus;
+import mekhq.campaign.mission.enums.ScenarioStatus;
 import mekhq.campaign.personnel.Person;
 import mekhq.campaign.personnel.SkillType;
 import mekhq.campaign.personnel.autoAwards.AutoAwardsController;
@@ -1279,8 +1280,14 @@ public final class BriefingTab extends CampaignGuiTab {
         // I can't just call it here, because it ends up getting reset somewhere
         // later
         SwingUtilities.invokeLater(() -> scrollScenarioView.getVerticalScrollBar().setValue(0));
+        
+        final boolean canStartGame = ((getCampaign().checkInterceptScenario(scenario)) && (scenario.canStartScenario(getCampaign())));
+           
+        if(!canStartGame){
+            btnStartGame.setToolTipText("Check Date or if you have unresolved interception mission");
+        }
+      
 
-        final boolean canStartGame = scenario.canStartScenario(getCampaign());
         btnStartGame.setEnabled(canStartGame);
         btnJoinGame.setEnabled(canStartGame);
         btnLoadGame.setEnabled(canStartGame);
@@ -1289,6 +1296,8 @@ public final class BriefingTab extends CampaignGuiTab {
         btnResolveScenario.setEnabled(canStartGame);
         btnAutoResolveScenario.setEnabled(canStartGame);
         btnPrintRS.setEnabled(canStartGame);
+
+        
     }
 
     public void refreshLanceAssignments() {
