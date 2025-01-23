@@ -524,6 +524,7 @@ public class StratconScenarioWizard extends JDialog {
                                 logger.error(ex.getMessage(), ex);
                             }
                         }
+
                     }
 
                     if (reinforcementResults == INTERCEPTED) {

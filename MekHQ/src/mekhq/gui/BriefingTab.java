@@ -721,6 +721,8 @@ public final class BriefingTab extends CampaignGuiTab {
         boolean control = JOptionPane.showConfirmDialog(getFrame(),
                 "Did your side control the battlefield at the end of the scenario?", "Control of Battlefield?",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION;
+
+        
         ResolveScenarioTracker tracker = new ResolveScenarioTracker(scenario, getCampaign(), control);
         ChooseMulFilesDialog chooseFilesDialog = new ChooseMulFilesDialog(getFrame(), true, tracker);
         chooseFilesDialog.setVisible(true);
@@ -730,7 +732,6 @@ public final class BriefingTab extends CampaignGuiTab {
         // tracker.postProcessEntities(control);
         ResolveScenarioWizardDialog resolveDialog = new ResolveScenarioWizardDialog(getFrame(), true, tracker);
         resolveDialog.setVisible(true);
-
         if (!getCampaign().getRetirementDefectionTracker().getRetirees().isEmpty()) {
             RetirementDefectionDialog dialog = new RetirementDefectionDialog(getCampaignGui(),
                     getCampaign().getMission(scenario.getMissionId()), false);
@@ -760,7 +761,7 @@ public final class BriefingTab extends CampaignGuiTab {
             }
 
             boolean isCivilianHelp = false;
-
+            System.out.println("breaking 4rd");
             if (tracker.getScenario() instanceof AtBScenario) {
                 isCivilianHelp = ((AtBScenario) tracker.getScenario()).getScenarioType() == AtBScenario.CIVILIANHELP;
             }
@@ -1281,7 +1282,7 @@ public final class BriefingTab extends CampaignGuiTab {
         // later
         SwingUtilities.invokeLater(() -> scrollScenarioView.getVerticalScrollBar().setValue(0));
         
-        final boolean canStartGame = ((getCampaign().checkInterceptScenario(scenario)) && (scenario.canStartScenario(getCampaign())));
+        final boolean canStartGame = ((!getCampaign().checkActiveLinkedScenario(scenario)) && (scenario.canStartScenario(getCampaign())));
            
         if(!canStartGame){
             btnStartGame.setToolTipText("Check Date or if you have unresolved interception mission");

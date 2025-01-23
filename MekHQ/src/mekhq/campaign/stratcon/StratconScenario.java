@@ -54,7 +54,7 @@ public class StratconScenario implements IStratconDisplayable {
             scenarioStateNames.put(ScenarioState.NONEXISTENT, "Shouldn't be seen");
             scenarioStateNames.put(ScenarioState.UNRESOLVED, "Unresolved");
             scenarioStateNames.put(ScenarioState.PRIMARY_FORCES_COMMITTED, "Primary forces committed");
-            scenarioStateNames.put(ScenarioState.AWAITING_REINFORCEMENTS, "Reinforcement interception not resolved");
+            scenarioStateNames.put(ScenarioState.AWAITING_REINFORCEMENTS, "Forces committed reinforcement interception not resolved");
             scenarioStateNames.put(ScenarioState.COMPLETED, "Victory");
             scenarioStateNames.put(ScenarioState.IGNORED, "Ignored");
             scenarioStateNames.put(ScenarioState.DEFEATED, "Defeat");
@@ -353,6 +353,10 @@ public class StratconScenario implements IStratconDisplayable {
 
     public void addFailedReinforcements(int forceID) {
         failedReinforcements.add(forceID);
+    }
+
+    public void removeFailedReinforcements(int forceID) {
+        failedReinforcements.remove(forceID);
     }
 
     public boolean ignoreForceAutoAssignment() {

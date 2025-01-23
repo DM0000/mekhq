@@ -176,6 +176,7 @@ public class Campaign implements ITechManager {
     private final TreeMap<Integer, Force> forceIds = new TreeMap<>();
     private final TreeMap<Integer, Mission> missions = new TreeMap<>();
     private final TreeMap<Integer, Scenario> scenarios = new TreeMap<>();
+    private final TreeMap<Integer, Scenario> linkedScenarios = new TreeMap<>();
     private final Map<UUID, List<Kill>> kills = new HashMap<>();
 
     private transient final UnitNameTracker unitNameTracker = new UnitNameTracker();
@@ -1013,6 +1014,7 @@ public class Campaign implements ITechManager {
     public void importScenario(Scenario scenario) {
         lastScenarioId = Math.max(lastScenarioId, scenario.getId());
         scenarios.put(scenario.getId(), scenario);
+        linkedScenarios.put(scenario.getReinforcementScenarioID(), scenario);
     }
 
     public void addUnitToForce(final @Nullable Unit unit, final Force force) {
@@ -1236,6 +1238,8 @@ public class Campaign implements ITechManager {
         s.setId(id);
         m.addScenario(s);
         scenarios.put(id, s);
+        linkedScenarios.put(s.getReinforcementScenarioID(), s);
+      
 
         if (newScenario && !suppressReport) {
             addReport(MessageFormat.format(
@@ -8666,11 +8670,33 @@ public class Campaign implements ITechManager {
 
         return commanderRank;
     }
+    /**
+     * Checks if Scenario has a ReinformentScenarioID and returns true if its active
+     */
+    public boolean checkActiveLinkedScenario (Scenario s) {
+        if(s.getReinforcementScenarioID() == 0){
+            return false;
+        }
 
-    public boolean checkInterceptScenario (Scenario s){
-    if(s.getReinforcementScenarioID() != 0){
-    return !getScenario(s.getReinforcementScenarioID()).getStatus().isCurrent();
+        if(getScenario(s.getReinforcementScenarioID()).getStatus().isCurrent()) {
+            return true;
+        }
+        return false;
     }
-    return true;
+
+    public void addLinkedScenario(Scenario s) {
+        linkedScenarios.put(s.getReinforcementScenarioID(), s);
     }
+
+    /**
+     * If this scenario links to another returns next scenario
+     */
+    public Scenario getLinkedScenario(Scenario s) {
+        return linkedScenarios.get(s.getId());
+    }
+
+    public boolean isReinforcementScenario(Scenario s){
+        return linkedScenarios.containsKey(s.getId());
+    }
+
 }

@@ -439,6 +439,7 @@ public class ResolveScenarioTracker {
         return us;
     }
 
+
     /**
      * This checks whether an entity has any blown off limbs. If the battlefield
      * was not controlled it marks the limb as destroyed. if the battlefield was
@@ -701,7 +702,6 @@ public class ResolveScenarioTracker {
                     peopleStatus.put(p.getId(), status);
                 }
             }
-            //set Awaiting to ready and add reinformemet
         }
 
         // And now we have potential prisoners that are crewing a unit...

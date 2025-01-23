@@ -71,6 +71,7 @@ import static mekhq.campaign.mission.ScenarioMapParameters.MapLocation.SpecificG
 import static mekhq.campaign.personnel.SkillType.S_ADMIN;
 import static mekhq.campaign.personnel.SkillType.S_TACTICS;
 import static mekhq.campaign.stratcon.StratconContractInitializer.getUnoccupiedCoords;
+import static mekhq.campaign.stratcon.StratconRulesManager.ReinforcementEligibilityType.CHAINED_SCENARIO;
 import static mekhq.campaign.stratcon.StratconRulesManager.ReinforcementEligibilityType.FIGHT_LANCE;
 import static mekhq.campaign.stratcon.StratconRulesManager.ReinforcementResultsType.DELAYED;
 import static mekhq.campaign.stratcon.StratconRulesManager.ReinforcementResultsType.FAILED;
@@ -1321,7 +1322,7 @@ public class StratconRulesManager {
         };
 
         generateReinforcementInterceptionScenario(campaign, scenario, contract, track, scenarioTemplate, force);
-
+        scenario.setCurrentState(ScenarioState.AWAITING_REINFORCEMENTS);
         return INTERCEPTED;
     }
 
@@ -2187,19 +2188,48 @@ public class StratconRulesManager {
                     // this must be done before removing the scenario from the track
                     // in case any objectives are linked to the scenario's coordinates
                     updateStrategicObjectives(victory, scenario, track);
-
+                 
                     if ((facility != null) && (facility.getOwnershipChangeScore() > 0)) {
                         switchFacilityOwner(facility);
                     }
-
-                    processTrackForceReturnDates(track, campaign);
-
                     track.removeScenario(scenario);
+                    processTrackForceReturnDates(track, campaign); 
                     break;
                 }
             }
         }
     }
+
+
+    public static void linkedScenerioProcessing(ResolveScenarioTracker tracker, List<Integer> forces) {
+        
+        Scenario backingScenario = tracker.getCampaign().getLinkedScenario(tracker.getScenario());
+  
+        Mission mission = tracker.getCampaign().getMission(backingScenario.getId());
+            if (mission instanceof AtBContract) {
+
+            StratconCampaignState campaignState = ((AtBContract) mission).getStratconCampaignState();
+            if (campaignState == null) {
+                return;
+            }
+
+           for (StratconTrackState track : campaignState.getTracks()) {
+                if (track.getBackingScenariosMap().containsKey(backingScenario.getId())) {
+                    StratconScenario scenario = track.getBackingScenariosMap().get(backingScenario.getId());
+                    for (int forceID : forces) {
+                        track.unassignForce(forceID);
+                        backingScenario.addForces(forceID);
+                    }
+
+                }
+
+            }
+
+            
+        }
+    }
+    
+
 
     /**
      * Worker function that updates strategic objectives relevant to the passed in

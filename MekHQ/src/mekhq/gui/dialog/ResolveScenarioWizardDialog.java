@@ -23,6 +23,7 @@
  package mekhq.gui.dialog;
 
 import static mekhq.campaign.personnel.randomEvents.PersonalityController.writeDescription;
+import static mekhq.campaign.stratcon.StratconRulesManager.ReinforcementEligibilityType.CHAINED_SCENARIO;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -80,14 +81,18 @@ import mekhq.campaign.ResolveScenarioTracker;
 import mekhq.campaign.ResolveScenarioTracker.OppositionPersonnelStatus;
 import mekhq.campaign.ResolveScenarioTracker.PersonStatus;
 import mekhq.campaign.ResolveScenarioTracker.UnitStatus;
+import mekhq.campaign.event.DeploymentChangedEvent;
 import mekhq.campaign.finances.Money;
 import mekhq.campaign.finances.enums.TransactionType;
+import mekhq.campaign.force.Force;
+import mekhq.campaign.mission.AtBContract;
 import mekhq.campaign.mission.Contract;
 import mekhq.campaign.mission.Loot;
 import mekhq.campaign.mission.ScenarioObjective;
 import mekhq.campaign.mission.ScenarioObjectiveProcessor;
 import mekhq.campaign.mission.enums.ScenarioStatus;
 import mekhq.campaign.personnel.Person;
+import mekhq.campaign.stratcon.StratconCampaignState;
 import mekhq.campaign.stratcon.StratconRulesManager;
 import mekhq.campaign.unit.TestUnit;
 import mekhq.campaign.unit.Unit;
@@ -207,6 +212,7 @@ public class ResolveScenarioWizardDialog extends JDialog {
     private JTextArea txtSalvage;
     private JTextArea txtRewards;
     //endregion Preview Panel components
+    private boolean reinforcementsSent;
 
     private static final MMLogger logger = MMLogger.create(ResolveScenarioWizardDialog.class);
 
@@ -398,9 +404,17 @@ public class ResolveScenarioWizardDialog extends JDialog {
         JCheckBox chkTotaled;
         JButton btnViewUnit;
         JButton btnEditUnit;
+        JButton btnSendReinforcements;
         
         int gridy = 2;
         int unitIndex = 0;
+
+        btnSendReinforcements = new JButton("Continue as Reinforcments");
+        btnSendReinforcements.setEnabled(tracker.getCampaign().isReinforcementScenario(tracker.getScenario()));
+        btnSendReinforcements.setActionCommand("1");
+        btnSendReinforcements.setName("Confirm Reinforcement");
+        btnSendReinforcements.addActionListener(new ReinforcementListener());
+
         for (Unit unit : tracker.getUnits()) {
             UnitStatus status = tracker.getUnitsStatus().get(unit.getId());
             ustatuses.add(status);
@@ -446,6 +460,7 @@ public class ResolveScenarioWizardDialog extends JDialog {
             gridy++;
             unitIndex++;
         }
+        pnlUnitStatus.add(btnSendReinforcements, gridBagConstraints);
         return pnlUnitStatus;
     }
 
@@ -1605,6 +1620,7 @@ public class ResolveScenarioWizardDialog extends JDialog {
                 }
             }
         }
+        List<Integer> forces = tracker.getScenario().getForceIDs();
 
         //now process
         tracker.resolveScenario((ScenarioStatus) choiceStatus.getSelectedItem(), txtReport.getText());
@@ -1631,9 +1647,15 @@ public class ResolveScenarioWizardDialog extends JDialog {
             }
         }
 
-        StratconRulesManager.processScenarioCompletion(tracker);
+        System.out.println("reinforcements sent"+ reinforcementsSent);
 
+        StratconRulesManager.processScenarioCompletion(tracker);
+        if(reinforcementsSent){
+            StratconRulesManager.linkedScenerioProcessing(tracker, forces);
+        }
+       
         this.setVisible(false);
+
     }
 
     private void cancel() {
@@ -2019,6 +2041,20 @@ public class ResolveScenarioWizardDialog extends JDialog {
             UUID id = UUID.fromString(evt.getActionCommand());
             int idx = Integer.parseInt(((JButton) evt.getSource()).getName());
             editUnit(id, idx, salvage);
+        }
+    }
+
+    private class ReinforcementListener implements ActionListener {
+
+        public ReinforcementListener() {
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            reinforcementsSent = true;
+        //    tracker.getCampaign().sendReinforcements(tracker.getScenario());
+           
+
         }
     }
 }
