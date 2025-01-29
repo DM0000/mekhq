@@ -761,7 +761,6 @@ public final class BriefingTab extends CampaignGuiTab {
             }
 
             boolean isCivilianHelp = false;
-            System.out.println("breaking 4rd");
             if (tracker.getScenario() instanceof AtBScenario) {
                 isCivilianHelp = ((AtBScenario) tracker.getScenario()).getScenarioType() == AtBScenario.CIVILIANHELP;
             }

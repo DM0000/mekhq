@@ -408,7 +408,6 @@ public class ResolveScenarioWizardDialog extends JDialog {
         
         int gridy = 2;
         int unitIndex = 0;
-        System.out.println(gridy);
 
         btnSendReinforcements = new JButton("Continue as Reinforcements");
         btnSendReinforcements.setEnabled(tracker.getScenario().getLinkedScenario() != 0);
@@ -1651,8 +1650,6 @@ public class ResolveScenarioWizardDialog extends JDialog {
                 objectiveProcessor.processObjective(objective, qualifyingUnitCount, override, tracker, false);
             }
         }
-
-        System.out.println("reinforcements sent"+ reinforcementsSent);
 
         StratconRulesManager.processScenarioCompletion(tracker);
         if(reinforcementsSent){
