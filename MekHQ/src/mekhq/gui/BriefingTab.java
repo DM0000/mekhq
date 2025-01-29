@@ -1282,9 +1282,10 @@ public final class BriefingTab extends CampaignGuiTab {
         // later
         SwingUtilities.invokeLater(() -> scrollScenarioView.getVerticalScrollBar().setValue(0));
         
-        final boolean canStartGame = ((!getCampaign().checkActiveLinkedScenario(scenario)) && (scenario.canStartScenario(getCampaign())));
+        
+         boolean canStartGame =  getCampaign().checkLinkedScenarios(scenario.getId());
            
-        if(!canStartGame){
+        if(canStartGame){
             btnStartGame.setToolTipText("Check Date or if you have unresolved interception mission");
         }
       

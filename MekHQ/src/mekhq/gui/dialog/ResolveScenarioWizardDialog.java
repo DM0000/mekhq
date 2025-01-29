@@ -408,9 +408,10 @@ public class ResolveScenarioWizardDialog extends JDialog {
         
         int gridy = 2;
         int unitIndex = 0;
+        System.out.println(gridy);
 
-        btnSendReinforcements = new JButton("Continue as Reinforcments");
-        btnSendReinforcements.setEnabled(tracker.getCampaign().isReinforcementScenario(tracker.getScenario()));
+        btnSendReinforcements = new JButton("Continue as Reinforcements");
+        btnSendReinforcements.setEnabled(tracker.getScenario().getLinkedScenario() != 0);
         btnSendReinforcements.setActionCommand("1");
         btnSendReinforcements.setName("Confirm Reinforcement");
         btnSendReinforcements.addActionListener(new ReinforcementListener());
@@ -460,7 +461,11 @@ public class ResolveScenarioWizardDialog extends JDialog {
             gridy++;
             unitIndex++;
         }
-        pnlUnitStatus.add(btnSendReinforcements, gridBagConstraints);
+
+ gridBagConstraints.anchor = GridBagConstraints.BELOW_BASELINE;
+ gridBagConstraints.gridx = 0;
+         pnlUnitStatus.add(btnSendReinforcements, gridBagConstraints);
+        
         return pnlUnitStatus;
     }
 
