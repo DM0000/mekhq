@@ -233,7 +233,7 @@ public class Scenario implements IPlayerSettings {
         return LinkedScenarioID;
     }
 
-    public void setLinkedScenario(int ScenarioID) {
+    public void setLinkedScenarioID(int ScenarioID) {
         LinkedScenarioID = ScenarioID;
     }
 
