@@ -233,7 +233,7 @@ public class Scenario implements IPlayerSettings {
         return LinkedScenarioID;
     }
 
-    public void setLinkedScenarioID(int ScenarioID) {
+    public void setLinkedScenario(int ScenarioID) {
         LinkedScenarioID = ScenarioID;
     }
 
@@ -880,20 +880,15 @@ public class Scenario implements IPlayerSettings {
     public boolean canStartScenario(Campaign c) {
 
         if (!getStatus().isCurrent()) {
-            System.out.println("!getStatus().isCurrent()");
             return false;
         }
-
         if (getForces(c).getAllUnits(true).isEmpty()) {
-            System.out.println("getForces(c).getAllUnits(true).isEmpty()");
             return false;
         }
         if (!includesRequiredPersonnel(c)) {
-            System.out.println("!includesRequiredPersonnel(c)");
             return false;
         }
         if (!includesRequiredUnits(c)) {
-            System.out.println("!includesRequiredUnits(c)");
             return false;
         }
         return true;

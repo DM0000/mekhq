@@ -63,6 +63,9 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
+
+import org.apache.logging.log4j.core.pattern.AbstractStyleNameConverter.Red;
+
 import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
@@ -212,7 +215,7 @@ public class ResolveScenarioWizardDialog extends JDialog {
     private JTextArea txtSalvage;
     private JTextArea txtRewards;
     //endregion Preview Panel components
-    private boolean reinforcementsSent;
+    private boolean reinforcementsSent = false;
 
     private static final MMLogger logger = MMLogger.create(ResolveScenarioWizardDialog.class);
 
@@ -415,6 +418,7 @@ public class ResolveScenarioWizardDialog extends JDialog {
         btnSendReinforcements.setName("Confirm Reinforcement");
         btnSendReinforcements.addActionListener(new ReinforcementListener());
 
+
         for (Unit unit : tracker.getUnits()) {
             UnitStatus status = tracker.getUnitsStatus().get(unit.getId());
             ustatuses.add(status);
@@ -448,7 +452,7 @@ public class ResolveScenarioWizardDialog extends JDialog {
             gridBagConstraints.insets = new Insets(5, 5, 0, 0);
             gridBagConstraints.weightx = 0.0;
             if (unitIndex == tracker.getUnits().size() - 1) {
-                gridBagConstraints.weighty = 1.0;
+                // gridBagConstraints.weighty = 1.0;
             }
             pnlUnitStatus.add(nameLbl, gridBagConstraints);
             gridBagConstraints.gridx = 1;
@@ -458,12 +462,14 @@ public class ResolveScenarioWizardDialog extends JDialog {
             gridBagConstraints.gridx = 3;
             pnlUnitStatus.add(btnEditUnit, gridBagConstraints);
             gridy++;
+            if (unitIndex == tracker.getUnits().size() - 1) {
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.gridy= gridy;
+                gridBagConstraints.gridx = 1;
+                pnlUnitStatus.add(btnSendReinforcements, gridBagConstraints);
+            }
             unitIndex++;
         }
-
- gridBagConstraints.anchor = GridBagConstraints.BELOW_BASELINE;
- gridBagConstraints.gridx = 0;
-         pnlUnitStatus.add(btnSendReinforcements, gridBagConstraints);
         
         return pnlUnitStatus;
     }
@@ -2053,8 +2059,13 @@ public class ResolveScenarioWizardDialog extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            reinforcementsSent = true;
-        //    tracker.getCampaign().sendReinforcements(tracker.getScenario());
+            reinforcementsSent = (!reinforcementsSent);
+        if(reinforcementsSent){
+            
+            ((JButton)evt.getSource()).setBackground(new Color(6, 64, 43));
+        }else{
+            ((JButton) evt.getSource()).setBackground(new Color(139, 0, 0));
+        }
            
 
         }

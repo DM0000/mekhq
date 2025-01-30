@@ -1278,8 +1278,7 @@ public class StratconRulesManager {
         }
 
         // Reinforcement roll failed, make interception check
-        int interceptionOdds = 100;
-        // calculateScenarioOdds(track, campaignState.getContract(), true);
+        int interceptionOdds = calculateScenarioOdds(track, campaignState.getContract(), true);
         int interceptionRoll = randomInt(100);
 
         // Check passed
