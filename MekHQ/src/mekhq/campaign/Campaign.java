@@ -8772,7 +8772,6 @@ public class Campaign implements ITechManager {
     // }
 
     public boolean checkLinkedScenarios(int sID) {
-
         for (Scenario scenario : getScenarios()) {
             if (scenario.getStatus().isCurrent() && scenario.getLinkedScenario() == sID) {
                 return false;
