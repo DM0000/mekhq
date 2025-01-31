@@ -67,6 +67,7 @@ import javax.swing.WindowConstants;
 import org.apache.logging.log4j.core.pattern.AbstractStyleNameConverter.Red;
 
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.EntityReadoutDialog;
@@ -151,6 +152,9 @@ public class ResolveScenarioWizardDialog extends JDialog {
     private List<JButton> btnsEditUnit;
     private List<UnitStatus> ustatuses;
     private List<JLabel> lblsUnitName;
+    private JButton btnSendReinforcements;
+    private boolean reinforcementsSent = false;
+    
 
     // maps objectives to list of associated entity checkboxes
     private Map<ScenarioObjective, List<JCheckBox>> objectiveCheckboxes;
@@ -215,7 +219,7 @@ public class ResolveScenarioWizardDialog extends JDialog {
     private JTextArea txtSalvage;
     private JTextArea txtRewards;
     //endregion Preview Panel components
-    private boolean reinforcementsSent = false;
+  
 
     private static final MMLogger logger = MMLogger.create(ResolveScenarioWizardDialog.class);
 
@@ -407,7 +411,7 @@ public class ResolveScenarioWizardDialog extends JDialog {
         JCheckBox chkTotaled;
         JButton btnViewUnit;
         JButton btnEditUnit;
-        JButton btnSendReinforcements;
+        
         
         int gridy = 2;
         int unitIndex = 0;
@@ -451,9 +455,7 @@ public class ResolveScenarioWizardDialog extends JDialog {
             gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
             gridBagConstraints.insets = new Insets(5, 5, 0, 0);
             gridBagConstraints.weightx = 0.0;
-            if (unitIndex == tracker.getUnits().size() - 1) {
-                // gridBagConstraints.weighty = 1.0;
-            }
+
             pnlUnitStatus.add(nameLbl, gridBagConstraints);
             gridBagConstraints.gridx = 1;
             pnlUnitStatus.add(chkTotaled, gridBagConstraints);
@@ -2064,7 +2066,7 @@ public class ResolveScenarioWizardDialog extends JDialog {
             
             ((JButton)evt.getSource()).setBackground(new Color(6, 64, 43));
         }else{
-            ((JButton) evt.getSource()).setBackground(new Color(139, 0, 0));
+            ((JButton) evt.getSource()).setBackground(UIManager.getColor("Button.background"));
         }
            
 

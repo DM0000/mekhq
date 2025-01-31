@@ -8758,18 +8758,8 @@ public class Campaign implements ITechManager {
     }
 
     /**
-     * Checks if Scenario has a ReinformentScenarioID and returns true if its active
+     * Checks if Scenario is linked by another Scenario and returns true if linked Scenario is active
      */
-    // public boolean checkActiveLinkedScenario (Scenario s) {
-    // if(s.getLinkedScenario() == 0){
-    // return false;
-    // }
-
-    // if(getScenario(s.getLinkedScenario()).getStatus().isCurrent()) {
-    // return true;
-    // }
-    // return false;
-    // }
 
     public boolean checkLinkedScenarios(int sID) {
         for (Scenario scenario : getScenarios()) {
